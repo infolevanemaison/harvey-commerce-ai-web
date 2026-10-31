@@ -1,5 +1,9 @@
 name: Harvey — detectar oportunidades públicas (sin contactar)
 on:
+  push:
+    paths:
+      - ".github/workflows/harvey-oportunidades.yml"
+      - "scripts/monitor_oportunidades.py"
   schedule:
     - cron: "17 7 * * *"
   workflow_dispatch:
