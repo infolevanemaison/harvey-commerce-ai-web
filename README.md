@@ -16,7 +16,14 @@ Landing de presentación del servicio piloto de mejora de fichas Shopify. Proyec
 4. Completar `aviso-legal.html`: titular, NIF y dirección de contacto exigida, privacidad y condiciones del servicio, conforme a asesoramiento apropiado.
 5. Revisar y confirmar alcance de la oferta, capacidad de entrega y proceso de facturación.
 6. Eliminar `noindex,nofollow` solo cuando se cumplan los puntos anteriores y se quiera indexación.
-7. GitHub > Settings > Pages > Deploy from a branch > main > /(root) > Save. Comprobar publicación y enlaces desde un móvil.
+7. **No usar GitHub Pages para el alojamiento comercial**: sus condiciones no permiten alojar allí como servicio gratuito un negocio orientado principalmente a transacciones comerciales. Usar GitHub solo como repositorio y controles.
+8. Para alojamiento propuesto: **Cloudflare Pages Free**. Crear proyecto con conexión GitHub seleccionando únicamente `infolevanemaison/harvey-commerce-ai-web`, producción `main`, configuración de HTML estático (sin framework), comando de compilación `exit 0`, directorio de salida `.` (raíz). Consultar la interfaz actual antes de confirmar. Deploy automático tras cambios de `main`.
+9. No difundir la URL ni activar cobros hasta completar identificaciones legales y obligaciones fiscales/Seguridad Social. Las páginas llevan `noindex` y cabeceras X-Robots-Tag provisionales.
+
+## Documentación oficial alojamiento
+- GitHub Pages límites: https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
+- Cloudflare Pages estático: https://developers.cloudflare.com/pages/framework-guides/deploy-anything/
+- Git conectado a Cloudflare: https://developers.cloudflare.com/pages/get-started/git-integration/
 
 ## Automatización sin coste
 `.github/workflows/verificar-sitio.yml` ejecuta comprobaciones automáticas del HTML y de enlaces internos en push y cada semana. **No envía mensajes comerciales** ni edita tiendas de clientes.
