@@ -31,7 +31,23 @@ KEYWORDS = re.compile(
     r"fichas de producto|descripciones|catálogo|catalogo|contenido comercial|"
     r"tienda online|redes sociales|woocommerce", re.I
 )
-SKIP = re.compile(r"full.?time|30\+ hours|senior developer|backend engineer", re.I)
+SKIP = re.compile(
+    r"full.?time|30\\+ hours|senior developer|backend engineer|"
+    r"wordpress (?:website|site)|website (?:development|build|design)|"
+    r"(?:shopify|online) store (?:build|setup|development)|"
+    r"web (?:developer|design)|label redesign|meta ads specialist|"
+    r"google ads specialist|e.?commerce product label", re.I
+)
+STRONG = re.compile(
+    r"product (?:listing|upload|entry|descriptions?|copy|content)|"
+    r"shopify (?:seo|product|catalog|content)|"
+    r"e.?commerce (?:seo|copy|content)|"
+    r"seo|copywriter|copywriting|content writ|"
+    r"social media (?:posts|copy|content)|"
+    r"fichas de productos?|descripciones? de productos?|"
+    r"cat[aá]logo|optimizaci[oó]n de productos?|"
+    r"contenido para (?:redes|e.?commerce)|publicaciones para redes", re.I
+)
 BASE = "https://api.github.com"
 
 def fetch(url, token=None, payload=None):
@@ -77,7 +93,7 @@ def collect():
                 title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:125]
                 raw_description = unescape(item.findtext("description", ""))
                 summary = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_description)).strip()[:260]
-                if not title or not KEYWORDS.search(title+" "+summary) or SKIP.search(title):
+                if not title or not STRONG.search(title) or SKIP.search(title):
                     continue
                 result[link] = (title, summary, source)
                 accepted += 1
@@ -123,6 +139,7 @@ def main():
         body = (
             "## Oportunidad indexada — PENDIENTE DE REVISIÓN\n\n"
             f"**Fuente del índice:** {source}\n"
+            "**Advertencia sobre plataformas:** Freelancer.com puede exigir saldo mínimo para pujar; Workana requiere aprobación del perfil. No gastar dinero.\n"
             f"**Anuncio original:** {link}\n"
             f"**Título en el RSS:** {title}\n\n"
             f"**Descripción pública (texto externo no verificado):** {summary}\n\n"
