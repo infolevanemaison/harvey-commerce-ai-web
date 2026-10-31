@@ -1,0 +1,70 @@
+name: Harvey Agencia - comprobar sitio sin costes
+on:
+  push:
+    paths:
+      - "index.html"
+      - "guia-fichas-shopify.html"
+      - "aviso-legal.html"
+      - "favicon.svg"
+      - ".github/workflows/verificar-sitio.yml"
+  schedule:
+    - cron: "34 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harvey-agencia-verificar
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Comprobar archivos y enlaces locales sin dependencias
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit, unquote
+          import sys
+          class Links(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.links=[]
+                  self.robots=False
+              def handle_starttag(self, tag, attrs):
+                  a=dict(attrs)
+                  if tag in ("a","link") and (a.get("href") or "").strip():
+                      self.links.append(a["href"])
+                  if tag=="meta" and a.get("name","").lower()=="robots" and "noindex" in a.get("content","").lower():
+                      self.robots=True
+          errors=[]
+          for name in ("index.html", "guia-fichas-shopify.html", "aviso-legal.html"):
+              p=Path(name)
+              if not p.is_file():
+                  errors.append(f"Falta {name}")
+                  continue
+              html=p.read_text(encoding="utf-8")
+              if not html.lower().lstrip().startswith("<!doctype html>"):
+                  errors.append(f"Doctype no válido: {name}")
+              parsed=Links()
+              parsed.feed(html)
+              if not parsed.robots:
+                  errors.append(f"Falta noindex en {name}; revisar legal antes del lanzamiento")
+              for link in parsed.links:
+                  url=urlsplit(link)
+                  if url.scheme in ("http", "https", "mailto", "tel", "data") or link.startswith(("#","//")):
+                      continue
+                  if url.scheme or not Path(unquote(url.path)).is_file():
+                      errors.append(f"Enlace interno no resuelto: {name} -> {link}")
+          if errors:
+              print("\n".join(errors), file=sys.stderr)
+              raise SystemExit(1)
+          print("Verificación OK: archivos presentes, noindex y enlaces internos correctos.")
+          PY
