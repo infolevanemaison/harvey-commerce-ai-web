@@ -1,6 +1,5 @@
-"""Detect publicly indexed job listings; record review-only opportunities in Issues.
-No Workana login, scraping, client outreach, paid API or automatic applications.
-An RSS entry does not prove that the job is currently open or new.
+"""Monitor of PUBLIC project RSS feeds. Never logs into marketplaces or contacts anyone.
+Results are review-only. A feed entry never confirms a job is still open.
 """
 import hashlib
 import json
@@ -12,109 +11,147 @@ from html import unescape
 from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 
-QUERIES = (
-    "site:workana.com/es/job/ Shopify productos SEO",
-    "site:workana.com/es/job/ tienda online contenido descripciones",
-    "site:workana.com/es/job/ moda e-commerce marketing",
+BING_QUERIES = (
+    "site:workana.com/es/job/ shopify",
+    "site:workana.com/es/job/ ecommerce seo productos",
+    "site:workana.com/es/job/ marketing contenidos",
 )
-PATTERN = re.compile(r"shopify|tienda|e-?commerce|seo|producto|catálogo|moda", re.I)
-HOSTS = {"www.workana.com", "workana.com"}
+FEEDS = [
+    ("Freelancer nuevos proyectos", "https://www.freelancer.com/rss.xml"),
+    ("Freelancer Shopify", "https://www.freelancer.com/rss/job_Shopify.xml"),
+    ("Freelancer Copywriting", "https://www.freelancer.com/rss/job_Copywriting.xml"),
+    ("Freelancer SEO", "https://www.freelancer.com/rss/job_SEO.xml"),
+]
+for query in BING_QUERIES:
+    FEEDS.append(("Bing Workana", "https://www.bing.com/search?" + urlencode({"q":query,"format":"rss"})))
+
+KEYWORDS = re.compile(
+    r"shopify|e.?commerce|online store|online shop|product listing|product description|"
+    r"copywriting|copywriter|content writ|seo|marketing content|"
+    r"fichas de producto|descripciones|catálogo|catalogo|contenido comercial|"
+    r"tienda online|redes sociales|woocommerce", re.I
+)
+SKIP = re.compile(r"full.?time|30\+ hours|senior developer|backend engineer", re.I)
 BASE = "https://api.github.com"
 
-
 def fetch(url, token=None, payload=None):
-    headers = {"User-Agent": "HarveyCommerceAI-ProspectMonitor/1.0", "Accept": "application/vnd.github+json" if token else "application/rss+xml"}
+    headers = {
+        "User-Agent": "HarveyCommerceAI-OpportunityMonitor/2.0",
+        "Accept": "application/vnd.github+json" if token else "application/rss+xml, application/xml",
+    }
     if token:
         headers.update({"Authorization": "Bearer " + token, "X-GitHub-Api-Version": "2022-11-28"})
-    data = json.dumps(payload).encode("utf-8") if payload else None
-    if data:
+    data = json.dumps(payload).encode("utf-8") if payload is not None else None
+    if data is not None:
         headers["Content-Type"] = "application/json"
-    req = Request(url, data=data, headers=headers)
-    with urlopen(req, timeout=18) as response:
-        return response.read()
+    with urlopen(Request(url, data=data, headers=headers), timeout=14) as resp:
+        return resp.read()
 
+def normalise_link(link):
+    parts = urlsplit(link)
+    host = parts.netloc.lower()
+    if parts.scheme != "https":
+        return None
+    if host in {"www.workana.com", "workana.com"} and re.fullmatch(
+        r"/(?:es/)?job/[\w-]+", parts.path.rstrip("/")
+    ):
+        return parts.scheme+"://"+host+parts.path.rstrip("/")
+    if host in {"www.freelancer.com", "freelancer.com"} and parts.path.startswith("/projects/"):
+        return parts.scheme+"://"+host+parts.path.rstrip("/")
+    return None
 
 def collect():
     result = {}
-    for q in QUERIES:
-        feed = "https://www.bing.com/search?" + urlencode({"q": q, "format": "rss"})
+    for source, url in FEEDS:
+        count = 0
+        accepted = 0
         try:
-            root = ET.fromstring(fetch(feed))
+            root = ET.fromstring(fetch(url))
+            items = root.findall(".//item")
+            count = len(items)
+            for item in items:
+                raw_link = unescape(item.findtext("link", "") or item.findtext("guid", "")).strip()
+                link = normalise_link(raw_link)
+                if not link:
+                    continue
+                title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:125]
+                raw_description = unescape(item.findtext("description", ""))
+                summary = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_description)).strip()[:260]
+                if not title or not KEYWORDS.search(title+" "+summary) or SKIP.search(title):
+                    continue
+                result[link] = (title, summary, source)
+                accepted += 1
+            print("Fuente:", source, "| ítems:", count, "| relevantes:", accepted)
         except Exception as exc:
-            print("RSS no disponible:", type(exc).__name__, file=sys.stderr)
-            continue
-        for item in root.findall("./channel/item"):
-            link = unescape(item.findtext("link", "")).strip()
-            parts = urlsplit(link)
-            clean = parts.scheme + "://" + parts.netloc + parts.path.rstrip("/")
-            title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:130]
-            summary = re.sub(r"<[^>]+>", "", unescape(item.findtext("description", ""))).strip()[:280]
-            if parts.scheme == "https" and parts.netloc.lower() in HOSTS and re.fullmatch(r"/(?:es/)?job/[a-zA-Z0-9_-]+", parts.path.rstrip("/")) and PATTERN.search(title + " " + summary):
-                result[clean] = (title, summary)
+            print("Fuente no accesible:", source, type(exc).__name__, str(exc)[:100], file=sys.stderr)
     return result
-
 
 def main():
     token, repo = os.environ.get("GITHUB_TOKEN", ""), os.environ.get("GITHUB_REPOSITORY", "")
     if not token or not repo:
-        print("Este monitor requiere el token integrado de GitHub Actions", file=sys.stderr)
+        print("Falta token integrado en GitHub Actions", file=sys.stderr)
         return 2
-    seen = set()
+    known = set()
     open_count = 0
     try:
         for page in range(1, 4):
-            url = BASE + "/repos/" + repo + "/issues?" + urlencode({"state":"all", "per_page":100, "page":page})
+            url = BASE+"/repos/"+repo+"/issues?"+urlencode({"state":"all","per_page":100,"page":page})
             issues = json.loads(fetch(url, token))
             for issue in issues:
                 if "pull_request" in issue:
                     continue
-                if issue.get("state") == "open" and issue.get("title", "").startswith("[lead:"):
+                if issue.get("state") == "open" and issue.get("title","").startswith("[lead:"):
                     open_count += 1
-                match = re.search(r"\[lead:([0-9a-f]{12})\]", issue.get("title", ""))
-                if match:
-                    seen.add(match.group(1))
+                digest = re.search(r"\[lead:([0-9a-f]{12})\]", issue.get("title",""))
+                if digest:
+                    known.add(digest.group(1))
             if len(issues) < 100:
                 break
     except Exception as exc:
-        print("No se pudo deduplicar. Se cancela por seguridad:", exc, file=sys.stderr)
+        print("Error comprobando duplicados; cancelamos el alta:", type(exc).__name__, file=sys.stderr)
         return 1
-    if open_count >= 20:
-        print("Tope de seguridad: 20 oportunidades abiertas; no se crean más hasta revisar y cerrar algunas.")
+    if open_count >= 30:
+        print("Límite de seguridad: 30 oportunidades sin revisar. Cerrar primero las descartadas.")
         return 0
+    candidates = collect()
     created = 0
-    for url, (title, summary) in collect().items():
-        digest = hashlib.sha256(url.encode()).hexdigest()[:12]
-        if digest in seen:
+    errors = 0
+    for link, (title, summary, source) in candidates.items():
+        digest = hashlib.sha256(link.encode()).hexdigest()[:12]
+        if digest in known:
             continue
         body = (
-            "## Oferta de trabajo indexada — revisión pendiente\n\n"
-            f"**Enlace:** {url}\n\n"
-            f"**Resumen indexado (no verificado):** {summary}\n\n"
-            "Comprobar publicación, vigencia, alcance, presupuesto y encaje real con Harvey. "
-            "Una coincidencia de RSS NO confirma disponibilidad actual.\n\n"
-            "**Estado:** pendiente de revisión, no contactado, propuesta NO enviada. "
-            "No se ejecutan campañas ni se envían mensajes.\n\n"
-            "**Controles:** no tratar datos personales, no saltar reglas de Workana, "
-            "no aceptar proyectos sin compatibilidad militar ni presupuesto confirmado.\n\n"
-            "**Propuesta inicial para REVISAR (NO enviada):**\n\n"
-            f"Hola, he visto vuestro anuncio \"{title}\". Tengo experiencia práctica en Shopify y trabajo con IA "
-            "para preparar fichas de producto claras, títulos, metadatos SEO y contenidos comerciales. "
-            "¿Podríais confirmar cuántos productos o entregables necesitáis, qué materiales podéis aportar "
-            "y vuestro presupuesto? Puedo preparar un piloto editorial de cinco fichas, sujeto a ajustar "
-            "el alcance. El trabajo técnico de desarrollo o publicación directa en vuestra tienda se "
-            "acordaría aparte.\n\n"
-            "*Borrador automático que requiere verificación de la oferta, edición y autorización previa.*"
+            "## Oportunidad indexada — PENDIENTE DE REVISIÓN\n\n"
+            f"**Fuente del índice:** {source}\n"
+            f"**Anuncio original:** {link}\n"
+            f"**Título en el RSS:** {title}\n\n"
+            f"**Descripción pública (texto externo no verificado):** {summary}\n\n"
+            "Este anuncio NO equivale a cliente, lead entrante ni oferta vigente. "
+            "Verificar fecha, estado, presupuesto, trabajo exacto y condiciones antes de actuar.\n\n"
+            "### Borrador genérico para adaptar y revisar, NO ENVIADO\n"
+            "Hola, he visto vuestro proyecto y me gustaría confirmar el volumen real de trabajo y "
+            "los materiales que tenéis disponibles. Tengo experiencia práctica con una tienda Shopify "
+            "propia y puedo preparar un piloto acotado de contenido para cinco productos: títulos, "
+            "descripciones SEO y preguntas frecuentes, siempre basados en datos verificables. "
+            "¿Qué plataforma y entregables necesitáis? Los cambios técnicos, anuncios y vídeos "
+            "terminados no se incluyen sin presupuesto y validación separados.\n\n"
+            "**Control:** no contacto externo ni aplicación automática. "
+            "No usar cuentas de compradores ni hacer mailing indiscriminado. "
+            "No contratar hasta verificar compatibilidad militar y condiciones del servicio."
         )
         try:
-            fetch(BASE + "/repos/" + repo + "/issues", token, {"title":f"[lead:{digest}] {title[:88]}", "body":body})
+            fetch(BASE+"/repos/"+repo+"/issues", token,
+                  {"title":f"[lead:{digest}] {title[:85]}","body":body})
             created += 1
+            known.add(digest)
         except Exception as exc:
-            print("No se pudo crear oportunidad:", type(exc).__name__, file=sys.stderr)
-        if created >= min(3, 20 - open_count):
+            errors += 1
+            print("No se pudo registrar una oportunidad:", type(exc).__name__, file=sys.stderr)
+        if created >= min(5,30-open_count):
             break
-    print("Oportunidades nuevas para revisar:", created, "| Propuestas enviadas: 0")
+    print("Resultados:",len(candidates),"| Oportunidades nuevas:",created,
+          "| Fallos:",errors,"| Propuestas enviadas: 0")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
