@@ -47,7 +47,7 @@ def collect():
             link = unescape(item.findtext("link", "")).strip()
             parts = urlsplit(link)
             clean = parts.scheme + "://" + parts.netloc + parts.path.rstrip("/")
-            title = re.sub(r"\\s+", " ", unescape(item.findtext("title", ""))).strip()[:130]
+            title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:130]
             summary = re.sub(r"<[^>]+>", "", unescape(item.findtext("description", ""))).strip()[:280]
             if parts.scheme == "https" and parts.netloc.lower() in HOSTS and re.fullmatch(r"/(?:es/)?job/[a-zA-Z0-9_-]+", parts.path.rstrip("/")) and PATTERN.search(title + " " + summary):
                 result[clean] = (title, summary)
@@ -65,7 +65,7 @@ def main():
             url = BASE + "/repos/" + repo + "/issues?" + urlencode({"state":"all", "per_page":100, "page":page})
             issues = json.loads(fetch(url, token))
             for issue in issues:
-                match = re.search(r"\\[lead:([0-9a-f]{12})\\]", issue.get("title", ""))
+                match = re.search(r"\[lead:([0-9a-f]{12})\]", issue.get("title", ""))
                 if match:
                     seen.add(match.group(1))
             if len(issues) < 100:
