@@ -1,0 +1,20 @@
+name: Harvey — detectar oportunidades públicas (sin contactar)
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  revisar-anuncios:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detectar ofertas indexadas y guardar hasta 3 propuestas de revisión
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/monitor_oportunidades.py
