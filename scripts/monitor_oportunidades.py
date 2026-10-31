@@ -60,11 +60,16 @@ def main():
         print("Este monitor requiere el token integrado de GitHub Actions", file=sys.stderr)
         return 2
     seen = set()
+    open_count = 0
     try:
         for page in range(1, 4):
             url = BASE + "/repos/" + repo + "/issues?" + urlencode({"state":"all", "per_page":100, "page":page})
             issues = json.loads(fetch(url, token))
             for issue in issues:
+                if "pull_request" in issue:
+                    continue
+                if issue.get("state") == "open" and issue.get("title", "").startswith("[lead:"):
+                    open_count += 1
                 match = re.search(r"\[lead:([0-9a-f]{12})\]", issue.get("title", ""))
                 if match:
                     seen.add(match.group(1))
@@ -73,6 +78,9 @@ def main():
     except Exception as exc:
         print("No se pudo deduplicar. Se cancela por seguridad:", exc, file=sys.stderr)
         return 1
+    if open_count >= 20:
+        print("Tope de seguridad: 20 oportunidades abiertas; no se crean más hasta revisar y cerrar algunas.")
+        return 0
     created = 0
     for url, (title, summary) in collect().items():
         digest = hashlib.sha256(url.encode()).hexdigest()[:12]
@@ -87,14 +95,22 @@ def main():
             "**Estado:** pendiente de revisión, no contactado, propuesta NO enviada. "
             "No se ejecutan campañas ni se envían mensajes.\n\n"
             "**Controles:** no tratar datos personales, no saltar reglas de Workana, "
-            "no aceptar proyectos sin compatibilidad militar ni presupuesto confirmado."
+            "no aceptar proyectos sin compatibilidad militar ni presupuesto confirmado.\n\n"
+            "**Propuesta inicial para REVISAR (NO enviada):**\n\n"
+            f"Hola, he visto vuestro anuncio \"{title}\". Tengo experiencia práctica en Shopify y trabajo con IA "
+            "para preparar fichas de producto claras, títulos, metadatos SEO y contenidos comerciales. "
+            "¿Podríais confirmar cuántos productos o entregables necesitáis, qué materiales podéis aportar "
+            "y vuestro presupuesto? Puedo preparar un piloto editorial de cinco fichas, sujeto a ajustar "
+            "el alcance. El trabajo técnico de desarrollo o publicación directa en vuestra tienda se "
+            "acordaría aparte.\n\n"
+            "*Borrador automático que requiere verificación de la oferta, edición y autorización previa.*"
         )
         try:
             fetch(BASE + "/repos/" + repo + "/issues", token, {"title":f"[lead:{digest}] {title[:88]}", "body":body})
             created += 1
         except Exception as exc:
             print("No se pudo crear oportunidad:", type(exc).__name__, file=sys.stderr)
-        if created >= 3:
+        if created >= min(3, 20 - open_count):
             break
     print("Oportunidades nuevas para revisar:", created, "| Propuestas enviadas: 0")
     return 0
