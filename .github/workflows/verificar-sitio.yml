@@ -4,6 +4,7 @@ on:
     paths:
       - "index.html"
       - "guia-fichas-shopify.html"
+      - "ejemplo-optimizacion-cosette.html"
       - "aviso-legal.html"
       - "favicon.svg"
       - ".github/workflows/verificar-sitio.yml"
@@ -45,7 +46,7 @@ jobs:
                   if tag=="meta" and a.get("name","").lower()=="robots" and "noindex" in a.get("content","").lower():
                       self.robots=True
           errors=[]
-          for name in ("index.html", "guia-fichas-shopify.html", "aviso-legal.html"):
+          for name in ("index.html", "guia-fichas-shopify.html", "ejemplo-optimizacion-cosette.html", "aviso-legal.html"):
               p=Path(name)
               if not p.is_file():
                   errors.append(f"Falta {name}")
