@@ -32,10 +32,11 @@ KEYWORDS = re.compile(
     r"tienda online|redes sociales|woocommerce", re.I
 )
 SKIP = re.compile(
-    r"full.?time|30\\+ hours|senior developer|backend engineer|"
+    r"full.?time|30\+ hours|senior developer|backend engineer|"
     r"wordpress (?:website|site)|website (?:development|build|design)|"
     r"(?:shopify|online) store (?:build|setup|development)|"
     r"web (?:developer|design)|label redesign|meta ads specialist|"
+    r"medical content|native english writer|job posting guide|copywriting project posting guide|"
     r"google ads specialist|e.?commerce product label", re.I
 )
 STRONG = re.compile(
