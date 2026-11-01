@@ -1,0 +1,29 @@
+name: Harvey — generar entrega DEMO de 5 fichas (sin clientes)
+on:
+  push:
+    paths:
+      - 'scripts/generar_piloto.py'
+      - 'briefs/demo-productos.json'
+      - 'tests/test_generar_piloto.py'
+      - '.github/workflows/harvey-generar-piloto.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  redactar-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar plantilla y datos
+        run: python3 -m unittest discover -s tests -p 'test_generar_piloto.py'
+      - name: Generar 5 fichas con checklist, SEO y hooks
+        run: python3 scripts/generar_piloto.py --brief briefs/demo-productos.json --output /tmp/harvey-entrega
+      - name: Guardar entrega revisable (no publicar a clientes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvey-5-fichas-demo
+          path: /tmp/harvey-entrega/
+          retention-days: 7
