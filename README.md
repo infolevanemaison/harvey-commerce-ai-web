@@ -8,7 +8,7 @@ Ayudamos a tiendas Shopify a presentar sus productos de forma más clara: títul
 - [Guía práctica de fichas Shopify](https://harvey-commerce-ai.higgsfield.app/guia-fichas-producto-shopify.html): ejemplos, buenas prácticas y checklist.
 - [Solicita una revisión inicial gratuita](https://harvey-commerce-ai.higgsfield.app/#diagnostico): hasta cinco enlaces públicos de producto y un breve resumen de hasta tres posibles mejoras, sin compromiso.
 
-**Servicio de pago opcional:** propuesta piloto de cinco fichas Shopify por **149 €**, con títulos y descripciones estructuradas, metadatos, posibles FAQ, cinco ideas orgánicas y borradores editables. Sin promesas de ventas o posicionamiento. Las condiciones y la identificación del prestador deben verificarse en la web antes de contratar.
+**Contratación de pago temporalmente suspendida (01/11/2026):** precio informativo previsto de **149 €** para cinco fichas Shopify, sujeto a habilitación profesional, fiscal y legal. **No se aceptan pedidos ni pagos**. El enlace de Stripe LIVE anterior está **desactivado** (`active=false`, comprobado en Stripe) y el botón de compra fue retirado de Higgsfield. Se mantienen únicamente los recursos gratuitos y las consultas informativas, sin compromiso de contratación ni garantía de ventas.
 
 [Conoce Harvey Commerce AI](https://harvey-commerce-ai.higgsfield.app/)
 
