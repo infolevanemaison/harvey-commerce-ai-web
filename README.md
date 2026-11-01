@@ -1,4 +1,19 @@
-# Harvey Commerce AI — sitio provisional
+# Harvey Commerce AI — automatizaciones y referencia técnica
+
+> **Estado actualizado (1 noviembre 2026):** La web comercial REAL está publicada en https://harvey-commerce-ai.higgsfield.app y alojada por Higgsfield, **no en este repositorio**. La cuenta Stripe de Harvey está conectada por separado, con un enlace real de pago único de 149 €: https://buy.stripe.com/aFa8wO55ycPd0BA8qtfMA01. La operación técnica de cobro funciona, pero **el aviso legal del sitio sigue pendiente de completar la identificación fiscal exigible**. No confundir capacidad de cobro con cumplimiento legal completo. No hay clientes ni pagos confirmados a fecha de verificación.
+>
+> Este repositorio incluye un **sitio HTML anterior, de referencia y sin publicar**; las instrucciones de no desplegar y de `noindex` que siguen en el README se refieren a ese prototipo, no a la web actual de Higgsfield.
+
+## Herramienta nueva: diagnóstico público de catálogos Shopify
+- Código: [scripts/diagnostico_catalogo.py](scripts/diagnostico_catalogo.py)
+- Pruebas ficticias: [tests/test_diagnostico_catalogo.py](tests/test_diagnostico_catalogo.py)
+- [Workflow en GitHub Actions](.github/workflows/harvey-diagnostico-catalogo.yml)
+- El workflow prueba el diagnóstico en cada cambio de sus archivos y se puede iniciar manualmente desde Actions indicando el dominio público HTTPS de una tienda; si se deja vacío, solo ejecuta pruebas.
+- Lee únicamente una muestra de hasta **20 productos** del catálogo JSON público de Shopify, comprobando permisos robots.txt y rechazando IP o dominios locales. Si la tienda bloquea el acceso, detiene el análisis.
+- Detecta posibles descripciones cortas/vacías, títulos repetidos, pocas imágenes, ausencia de alt y guía de tallas. Son **señales editoriales**, no métricas de ventas ni una auditoría SEO completa.
+- El informe se genera como artefacto temporal de GitHub Actions para revisión humana. **No accede a clientes, no envía propuestas, no cambia tiendas ni publica datos privados.** Las pruebas locales en entorno aislado comprobaron el tipo de análisis; el éxito de la nueva ejecución en la nube debe revisarse en Actions.
+
+## Sitio anterior (archivo histórico, no desplegado por este repositorio)
 
 Landing de presentación del servicio piloto de mejora de fichas Shopify. Proyecto **independiente** de Levanemaison.
 
