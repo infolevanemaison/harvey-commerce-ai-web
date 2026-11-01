@@ -26,7 +26,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Pruebas unitarias con pagos ficticios (sin Stripe)
-        run: python3 -m unittest discover -s tests -p 'test_harvey_verificar_pagos.py' -v
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
 
   detectar-pagos:
     if: github.event_name != 'push'
