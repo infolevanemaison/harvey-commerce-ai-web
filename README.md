@@ -1,8 +1,22 @@
-# Harvey Commerce AI — automatizaciones y referencia técnica
+# Harvey Commerce AI — fichas Shopify, claridad comercial y SEO
 
-> **Estado actualizado (1 noviembre 2026):** La web comercial REAL está publicada en https://harvey-commerce-ai.higgsfield.app y alojada por Higgsfield, **no en este repositorio**. La cuenta Stripe de Harvey está conectada por separado, con un enlace real de pago único de 149 €: https://buy.stripe.com/aFa8wO55ycPd0BA8qtfMA01. La operación técnica de cobro funciona, pero **el aviso legal del sitio sigue pendiente de completar la identificación fiscal exigible**. No confundir capacidad de cobro con cumplimiento legal completo. No hay clientes ni pagos confirmados a fecha de verificación.
->
-> Este repositorio incluye un **sitio HTML anterior, de referencia y sin publicar**; las instrucciones de no desplegar y de `noindex` que siguen en el README se refieren a ese prototipo, no a la web actual de Higgsfield.
+Ayudamos a tiendas Shopify a presentar sus productos de forma más clara: títulos, descripciones, metadatos SEO y contenido orgánico **basados en información verificable**.
+
+**Recursos gratuitos, sin registro ni acceso a Shopify:**
+
+- [Test interactivo para revisar una ficha Shopify](https://harvey-commerce-ai.higgsfield.app/test-ficha-producto-shopify.html): seis preguntas, puntuación orientativa y tres recomendaciones calculadas localmente en el navegador. No es una auditoría remota de tu web ni mide conversiones reales.
+- [Guía práctica de fichas Shopify](https://harvey-commerce-ai.higgsfield.app/guia-fichas-producto-shopify.html): ejemplos, buenas prácticas y checklist.
+- [Solicita una revisión inicial gratuita](https://harvey-commerce-ai.higgsfield.app/#diagnostico): hasta cinco enlaces públicos de producto y un breve resumen de hasta tres posibles mejoras, sin compromiso.
+
+**Servicio de pago opcional:** propuesta piloto de cinco fichas Shopify por **149 €**, con títulos y descripciones estructuradas, metadatos, posibles FAQ, cinco ideas orgánicas y borradores editables. Sin promesas de ventas o posicionamiento. Las condiciones y la identificación del prestador deben verificarse en la web antes de contratar.
+
+[Conoce Harvey Commerce AI](https://harvey-commerce-ai.higgsfield.app/)
+
+---
+
+## Información técnica para colaboradores
+
+Este repositorio **no aloja la web comercial**: la web pública se administra y despliega de forma independiente en Higgsfield. Aquí se mantienen utilidades de diagnóstico y monitorización, pruebas, documentación y un prototipo histórico HTML. No introducir claves, datos personales ni material confidencial en este repositorio público. Tampoco hay automatización autorizada para enviar publicidad no solicitada.
 
 ## Herramienta nueva: diagnóstico público de catálogos Shopify
 - Código: [scripts/diagnostico_catalogo.py](scripts/diagnostico_catalogo.py)
@@ -14,24 +28,26 @@
 - El informe se genera como artefacto temporal de GitHub Actions para revisión humana. **No accede a clientes, no envía propuestas, no cambia tiendas ni publica datos privados.** Las pruebas locales en entorno aislado comprobaron el tipo de análisis; el éxito de la nueva ejecución en la nube debe revisarse en Actions.
 
 
-## Seguimiento automatizado de pagos de 149 € (pendiente de clave)
+## Seguimiento automatizado de pagos de 149 € (clave restringida configurada)
 
 - Código: [scripts/harvey_verificar_pagos.py](scripts/harvey_verificar_pagos.py)
 - Pruebas ficticias: [tests/test_harvey_verificar_pagos.py](tests/test_harvey_verificar_pagos.py)
 - Workflow programado: [Harvey - Revisar pagos reales de 149 EUR](.github/workflows/harvey-pagos-verificados.yml), cada 2 horas.
 - [Guía iPhone de activación](docs/ACTIVAR_MONITOR_STRIPE_DESDE_IPHONE.md): requiere **solo** el secreto `STRIPE_RESTRICTED_KEY` en GitHub, con permiso Stripe Checkout Sessions de **solo lectura**.
-- **PENDIENTE**: antes de instalar ese secreto, la rutina solo ejecuta pruebas y no monitoriza pagos reales. No se han creado cargos, reembolsos ni facturas desde GitHub.
+- **Última consulta real verificada (01/11/2026 a las 17:32 UTC):** el monitor autenticó con Stripe, leyó una página y confirmó **0 pagos reales** del enlace. La alerta de autenticación anterior se cerró automáticamente. [Evidencia en GitHub Actions](https://github.com/infolevanemaison/harvey-commerce-ai-web/actions/runs/41331212512). Se ejecuta por programación, pero cada futura ejecución requiere comprobar sus registros antes de afirmar que está funcionando.
+- La configuración guarda una clave restringida solo en GitHub Actions Secrets; **no** publicar ni pegar claves en código, chats o incidencias.
+- No se crean cargos, reembolsos ni facturas desde GitHub. Una sesión de Checkout abierta no es una venta.
 - Avisos anónimos mediante Issues; al ser público este repositorio, la existencia de un aviso de compra sería pública. No registrar PII.
 
 ## Sitio anterior (archivo histórico, no desplegado por este repositorio)
 
-Landing de presentación del servicio piloto de mejora de fichas Shopify. Proyecto **independiente** de Levanemaison.
+Landing anterior y no publicada, preservada para referencia técnica. **La web real es el sitio de Higgsfield enlazado al principio.**
 
 ## Estado
 - Sitio preparado en GitHub; **no desplegar ni promocionar públicamente** antes de completar identificaciones y obligaciones legales.
 - Contiene `noindex,nofollow`, aviso legal pendiente y llamadas a solicitar **información**, no a pagar.
 - Sin formularios, scripts de analítica, cookies, checkout ni procesamiento de pagos.
-- Email temporal de contacto: alias plus-addressing del buzón conectado de Levanemaison. Separar correo antes de lanzamiento comercial.
+- El canal provisional de consultas usa un alias de correo. Antes de escalar, es recomendable dedicar a la agencia un buzón independiente.
 - Nombre y precios provisionales; la oferta piloto sugerida es 149 € por cinco fichas. Sin resultados garantizados.
 
 ## Checklist de lanzamiento
@@ -54,4 +70,4 @@ Landing de presentación del servicio piloto de mejora de fichas Shopify. Proyec
 `.github/workflows/verificar-sitio.yml` ejecuta comprobaciones automáticas del HTML y de enlaces internos en push y cada semana. **No envía mensajes comerciales** ni edita tiendas de clientes.
 
 ## Indicadores iniciales
-Clientes reales: 0. Facturación cobrada: 0 €. Gasto nuevo previsto: 0 €. Ni estas cifras ni oportunidades investigadas deben confundirse con ventas.
+Clientes reales: 0. Facturación cobrada: 0 €. Gasto nuevo previsto: 0 €. Ni estas cifras ni oportunidades investigadas deben confundirse con ventas. La publicación de herramientas tampoco demuestra visitas o solicitudes.
