@@ -51,10 +51,10 @@ STRONG = re.compile(
 )
 # No aceptar trabajos que prohíben IA ni idiomas que no podamos revisar con fiabilidad.
 INCOMPATIBLE = re.compile(
-    r"no\\s+(?:ai|chatgpt|artificial intelligence)\\s+(?:tools?|generated|content|drafts?)?|"
-    r"without\\s+(?:ai|chatgpt)|human.?written only|"
+    r"no\s+(?:ai|chatgpt|artificial intelligence)\s+(?:tools?|generated|content|drafts?)?|"
+    r"without\s+(?:ai|chatgpt)|human.?written only|"
     r"bahasa indonesia|indonesian language|native (?:uk|us|english)|"
-    r"only\\s+\\$?15\\b|urgent immediate (?:full.?time|hours)", re.I
+    r"only\s+\$?15\b|urgent immediate (?:full.?time|hours)", re.I
 )
 CONTEXT = re.compile(
     r"shopify|woocommerce|online store|online shop|e.?commerce|"
