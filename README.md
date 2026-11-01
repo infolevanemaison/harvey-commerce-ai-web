@@ -13,6 +13,16 @@
 - Detecta posibles descripciones cortas/vacías, títulos repetidos, pocas imágenes, ausencia de alt y guía de tallas. Son **señales editoriales**, no métricas de ventas ni una auditoría SEO completa.
 - El informe se genera como artefacto temporal de GitHub Actions para revisión humana. **No accede a clientes, no envía propuestas, no cambia tiendas ni publica datos privados.** Las pruebas locales en entorno aislado comprobaron el tipo de análisis; el éxito de la nueva ejecución en la nube debe revisarse en Actions.
 
+
+## Seguimiento automatizado de pagos de 149 € (pendiente de clave)
+
+- Código: [scripts/harvey_verificar_pagos.py](scripts/harvey_verificar_pagos.py)
+- Pruebas ficticias: [tests/test_harvey_verificar_pagos.py](tests/test_harvey_verificar_pagos.py)
+- Workflow programado: [Harvey - Revisar pagos reales de 149 EUR](.github/workflows/harvey-pagos-verificados.yml), cada 2 horas.
+- [Guía iPhone de activación](docs/ACTIVAR_MONITOR_STRIPE_DESDE_IPHONE.md): requiere **solo** el secreto `STRIPE_RESTRICTED_KEY` en GitHub, con permiso Stripe Checkout Sessions de **solo lectura**.
+- **PENDIENTE**: antes de instalar ese secreto, la rutina solo ejecuta pruebas y no monitoriza pagos reales. No se han creado cargos, reembolsos ni facturas desde GitHub.
+- Avisos anónimos mediante Issues; al ser público este repositorio, la existencia de un aviso de compra sería pública. No registrar PII.
+
 ## Sitio anterior (archivo histórico, no desplegado por este repositorio)
 
 Landing de presentación del servicio piloto de mejora de fichas Shopify. Proyecto **independiente** de Levanemaison.
