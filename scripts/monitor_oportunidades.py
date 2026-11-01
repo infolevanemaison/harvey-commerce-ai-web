@@ -16,12 +16,9 @@ BING_QUERIES = (
     "site:workana.com/es/job/ ecommerce seo productos",
     "site:workana.com/es/job/ marketing contenidos",
 )
-FEEDS = [
-    ("Freelancer nuevos proyectos", "https://www.freelancer.com/rss.xml"),
-    ("Freelancer Shopify", "https://www.freelancer.com/rss/job_Shopify.xml"),
-    ("Freelancer Copywriting", "https://www.freelancer.com/rss/job_Copywriting.xml"),
-    ("Freelancer SEO", "https://www.freelancer.com/rss/job_SEO.xml"),
-]
+# Excluir Freelancer: exige saldo mínimo para pujar, incompatible con 0 EUR.
+# Se mantienen exclusivamente búsquedas públicas de Workana para revisión.
+FEEDS = []
 for query in BING_QUERIES:
     FEEDS.append(("Bing Workana", "https://www.bing.com/search?" + urlencode({"q":query,"format":"rss"})))
 
@@ -100,8 +97,6 @@ def normalise_link(link):
         r"/(?:es/)?job/[\w-]+", parts.path.rstrip("/")
     ):
         return parts.scheme+"://"+host+parts.path.rstrip("/")
-    if host in {"www.freelancer.com", "freelancer.com"} and parts.path.startswith("/projects/"):
-        return parts.scheme+"://"+host+parts.path.rstrip("/")
     return None
 
 def collect():
@@ -174,7 +169,7 @@ def main():
             "## Oportunidad indexada — PENDIENTE DE REVISIÓN\n\n"
             f"**Fuente del índice:** {source}\n"
             f"**Puntuación automática de afinidad (no valida disponibilidad):** {quality}/12\n"
-            "**Advertencia sobre plataformas:** Freelancer.com puede exigir saldo mínimo para pujar; Workana requiere aprobación del perfil. No gastar dinero.\n"
+            "**Plataforma:** Workana requiere la aprobación del perfil antes de presentar propuestas. No gastar dinero.\n"
             f"**Anuncio original:** {link}\n"
             f"**Título en el RSS:** {title}\n\n"
             f"**Descripción pública (texto externo no verificado):** {summary}\n\n"
