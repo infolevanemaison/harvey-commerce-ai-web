@@ -1,0 +1,103 @@
+{
+  "client_alias": "demo_ficticio",
+  "language": "es",
+  "products": [
+    {
+      "id": "demo01",
+      "name": "Vestido Aura",
+      "type": "vestido midi",
+      "target_audience": "personas que buscan vestidos para ocasiones especiales",
+      "attributes": [
+        "Cierre lateral con cremallera",
+        "Escote redondo",
+        "Color azul marino"
+      ],
+      "benefits": [
+        "Diseño midi",
+        "Cierre lateral",
+        "Escote redondo"
+      ],
+      "materials": "",
+      "sizes": "",
+      "care": "",
+      "shipping": "",
+      "returns": ""
+    },
+    {
+      "id": "demo02",
+      "name": "Blusa Vera",
+      "type": "blusa de manga larga",
+      "target_audience": "compradoras de moda de oficina",
+      "attributes": [
+        "Manga larga",
+        "Cuello camisero"
+      ],
+      "benefits": [
+        "Cuello camisero",
+        "Manga larga"
+      ],
+      "materials": "Material: dato no confirmado en este ejemplo",
+      "sizes": "",
+      "care": "",
+      "shipping": "",
+      "returns": ""
+    },
+    {
+      "id": "demo03",
+      "name": "Falda Elisa",
+      "type": "falda plisada",
+      "target_audience": "compradoras de moda versátil",
+      "attributes": [
+        "Diseño plisado",
+        "Color beige"
+      ],
+      "benefits": [
+        "Plisado",
+        "Color beige"
+      ],
+      "materials": "",
+      "sizes": "",
+      "care": "",
+      "shipping": "",
+      "returns": ""
+    },
+    {
+      "id": "demo04",
+      "name": "Chaqueta Noa",
+      "type": "chaqueta ligera",
+      "target_audience": "personas interesadas en chaquetas de entretiempo",
+      "attributes": [
+        "Cierre de botones",
+        "Dos bolsillos delanteros"
+      ],
+      "benefits": [
+        "Dos bolsillos delanteros",
+        "Cierre de botones"
+      ],
+      "materials": "",
+      "sizes": "",
+      "care": "",
+      "shipping": "",
+      "returns": ""
+    },
+    {
+      "id": "demo05",
+      "name": "Pantalón Iris",
+      "type": "pantalón de corte recto",
+      "target_audience": "personas interesadas en básicos de armario",
+      "attributes": [
+        "Corte recto",
+        "Color negro"
+      ],
+      "benefits": [
+        "Corte recto",
+        "Color negro"
+      ],
+      "materials": "",
+      "sizes": "",
+      "care": "",
+      "shipping": "",
+      "returns": ""
+    }
+  ]
+}
