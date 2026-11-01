@@ -1,0 +1,49 @@
+name: Harvey - Revisar pagos reales de 149 EUR
+on:
+  push:
+    paths:
+      - 'scripts/harvey_verificar_pagos.py'
+      - 'tests/test_harvey_verificar_pagos.py'
+      - '.github/workflows/harvey-pagos-verificados.yml'
+  schedule:
+    - cron: '41 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: harvey-pagos-solo-uno
+  cancel-in-progress: false
+
+jobs:
+  comprobar-seguridad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Pruebas unitarias con pagos ficticios (sin Stripe)
+        run: python3 -m unittest discover -s tests -p 'test_harvey_verificar_pagos.py' -v
+
+  detectar-pagos:
+    if: github.event_name != 'push'
+    needs: comprobar-seguridad
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verificar nuevas compras reales, sin datos privados en los Issues
+        env:
+          STRIPE_RESTRICTED_KEY: ${{ secrets.STRIPE_RESTRICTED_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$STRIPE_RESTRICTED_KEY" ]; then
+            echo '::notice::PENDIENTE DE ACTIVAR: falta STRIPE_RESTRICTED_KEY (clave restringida de SOLO LECTURA de Checkout Sessions) en GitHub Actions Secrets.'
+            exit 0
+          fi
+          python3 scripts/harvey_verificar_pagos.py
