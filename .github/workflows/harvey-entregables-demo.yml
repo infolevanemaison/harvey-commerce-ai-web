@@ -1,0 +1,36 @@
+name: Harvey - generar entregables de demostracion
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/harvey_entregas.py"
+      - "ejemplos/briefing_demo.json"
+      - ".github/workflows/harvey-entregables-demo.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harvey-entregables-demo
+  cancel-in-progress: false
+
+jobs:
+  generar-paquete-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Descargar proyecto
+        uses: actions/checkout@v4
+      - name: Validar y generar 5 fichas FICTICIAS
+        run: |
+          python3 -m py_compile scripts/harvey_entregas.py
+          python3 scripts/harvey_entregas.py --input ejemplos/briefing_demo.json --output generated_demo
+          test "$(find generated_demo -maxdepth 1 -name 'demo*.md' | wc -l)" -eq 5
+          test -s generated_demo/shopify_seo_drafts.csv
+          test -s generated_demo/QA_PENDIENTES.md
+      - name: Guardar artefacto solo de DEMOSTRACION
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvey-piloto-demo
+          path: generated_demo/
+          retention-days: 7
