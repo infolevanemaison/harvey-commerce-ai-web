@@ -37,6 +37,10 @@ def assess(issue, now=None):
     if not title.startswith(("[lead:", "[revisar-comercial]")):
         return None
     raw = title + " " + body[:12000]
+    # El titular prohíbe gastos adicionales: los anuncios Freelancer
+    # históricos no son oportunidades utilizables y no deben priorizarse.
+    if "freelancer.com" in raw.lower():
+        return None
     score, why, warnings = 0, [], []
     if HIGH_FIT.search(title):
         score += 6
