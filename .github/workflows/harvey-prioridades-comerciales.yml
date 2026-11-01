@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python3 scripts/priorizar_oportunidades.py --output "$RUNNER_TEMP/harvey-prioridades.md"
-      - name: Guardar informe como artefacto privado del workflow
+      - name: Guardar informe como artefacto temporal del workflow
         if: success()
         uses: actions/upload-artifact@v4
         with:
