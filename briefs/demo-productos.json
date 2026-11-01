@@ -1,0 +1,59 @@
+{
+  "brand": "Marca de demostración — NO es un cliente",
+  "source_notice": "Datos ficticios para demostrar formato; NO publicar como hechos comerciales.",
+  "products": [
+    {
+      "name": "Vestido Aurora",
+      "category": "vestido midi",
+      "attributes": {
+        "Color": "azul marino",
+        "Diseño": "manga corta",
+        "Cierre": "cremallera lateral"
+      },
+      "verified_summary": "Descripción de ejemplo para una ficha de producto. Los datos son ficticios.",
+      "occasion": "ocasiones especiales",
+      "available_variants": "S y M (ejemplo)"
+    },
+    {
+      "name": "Falda Mar",
+      "category": "falda midi",
+      "attributes": {
+        "Patrón": "rayas verticales",
+        "Color": "negro y blanco",
+        "Corte": "evasé"
+      },
+      "verified_summary": "Ejemplo educativo, no inventario real.",
+      "available_variants": "S, M y L (ejemplo)"
+    },
+    {
+      "name": "Blazer Brisa",
+      "category": "chaqueta de vestir",
+      "attributes": {
+        "Color": "beige",
+        "Diseño": "solapas clásicas",
+        "Cierre": "botón frontal"
+      },
+      "available_variants": "M y L (ejemplo)"
+    },
+    {
+      "name": "Conjunto Alba",
+      "category": "conjunto de dos piezas",
+      "attributes": {
+        "Incluye": "blusa y pantalón",
+        "Color": "verde oliva",
+        "Estilo": "liso"
+      },
+      "available_variants": "S y XL (ejemplo)"
+    },
+    {
+      "name": "Mono Luna",
+      "category": "mono largo",
+      "attributes": {
+        "Color": "negro",
+        "Escote": "cuadrado",
+        "Pantalón": "pernera ancha"
+      },
+      "available_variants": "M (ejemplo)"
+    }
+  ]
+}
