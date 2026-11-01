@@ -150,6 +150,11 @@ def main():
                 digest = re.search(r"\[lead:([0-9a-f]{12})\]", issue.get("title",""))
                 if digest:
                     known.add(digest.group(1))
+                # También deduplicar las oportunidades creadas a mano en Issues.
+                for raw_url in re.findall(r"https://(?:www\.)?(?:freelancer\.com|workana\.com)/[^\s\)<>]+", issue.get("body") or ""):
+                    canonical = normalise_link(raw_url.rstrip(".,"))
+                    if canonical:
+                        known.add(hashlib.sha256(canonical.encode()).hexdigest()[:12])
             if len(issues) < 100:
                 break
     except Exception as exc:
