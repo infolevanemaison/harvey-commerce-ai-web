@@ -28,7 +28,8 @@ Actualizado: 1 de noviembre de 2026.
 - **Aviso**: los Issues son públicos; por tanto terceros podrían inferir que existen compras. Si esto no es aceptable, dejar el secreto sin configurar y trasladar en el futuro las alertas a un backend privado autenticado.
 - No emite facturas, no intenta reembolsos y no inicia entregas a partir de un pago de prueba.
 - El registro de pago es un **indicador de transacción**, no de beneficio neto: revisar impuestos, comisiones y reembolsos en Stripe.
-- Si no se ha instalado el secreto, el workflow ejecuta las pruebas pero informa claramente de que la consulta Stripe está PENDIENTE. No hay vigilancia real mientras tanto.
+- **Sin el secreto, con una clave inválida (401/403) o si Stripe no responde, la ejecución termina en ROJO** y abre **una sola** alerta en Issues: «[Harvey][ALERTA] El monitor de pagos de Stripe no está operativo». No se abren alertas duplicadas, y la alerta se cierra sola en la primera ejecución que consulta Stripe correctamente.
+- **Prueba de que ha consultado Stripe de verdad:** el registro y el resumen de la ejecución muestran «Stripe consultado: N página(s), M sesión(es) completadas del enlace, P pago(s) reales…». Un verde sin esa línea no demuestra vigilancia.
 
 ## Seguridad y mantenimiento
 - El script rechaza claves generales `sk_live_`, utiliza `rk_live_` restringida.

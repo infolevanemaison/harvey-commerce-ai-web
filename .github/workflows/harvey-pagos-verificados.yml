@@ -41,9 +41,7 @@ jobs:
         env:
           STRIPE_RESTRICTED_KEY: ${{ secrets.STRIPE_RESTRICTED_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if [ -z "$STRIPE_RESTRICTED_KEY" ]; then
-            echo '::notice::PENDIENTE DE ACTIVAR: falta STRIPE_RESTRICTED_KEY (clave restringida de SOLO LECTURA de Checkout Sessions) en GitHub Actions Secrets.'
-            exit 0
-          fi
-          python3 scripts/harvey_verificar_pagos.py
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        # Sin clave o con error: la ejecución termina en ROJO y abre UNA alerta en Issues.
+        # Nunca en verde aparentando que vigila pagos.
+        run: python3 scripts/harvey_verificar_pagos.py
