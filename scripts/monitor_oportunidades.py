@@ -49,6 +49,33 @@ STRONG = re.compile(
     r"cat[aá]logo|optimizaci[oó]n de productos?|"
     r"contenido para (?:redes|e.?commerce)|publicaciones para redes", re.I
 )
+# No aceptar trabajos que prohíben IA ni idiomas que no podamos revisar con fiabilidad.
+INCOMPATIBLE = re.compile(
+    r"no\\s+(?:ai|chatgpt|artificial intelligence)\\s+(?:tools?|generated|content|drafts?)?|"
+    r"without\\s+(?:ai|chatgpt)|human.?written only|"
+    r"bahasa indonesia|indonesian language|native (?:uk|us|english)|"
+    r"only\\s+\\$?15\\b|urgent immediate (?:full.?time|hours)", re.I
+)
+CONTEXT = re.compile(
+    r"shopify|woocommerce|online store|online shop|e.?commerce|"
+    r"product|catalog|cat[aá]logo|fashion|moda|beauty|belleza|retail|storefront", re.I
+)
+DIRECT_TITLE = re.compile(
+    r"shopify|product (?:listing|upload|entry|descriptions?|copy|content)|"
+    r"e.?commerce|online store|fichas de producto|cat[aá]logo|descripciones de producto", re.I
+)
+
+def score(title, summary):
+    raw = title+" "+summary
+    if SKIP.search(title) or INCOMPATIBLE.search(raw):
+        return -100
+    if not STRONG.search(title) or not CONTEXT.search(raw):
+        return -100
+    value = (6 if DIRECT_TITLE.search(title) else 2)
+    value += (4 if re.search(r"shopify|online store|e.?commerce|product", summary, re.I) else 0)
+    value += (2 if re.search(r"fashion|moda|beauty|belleza|retail", raw, re.I) else 0)
+    return value
+
 BASE = "https://api.github.com"
 
 def fetch(url, token=None, payload=None):
@@ -94,9 +121,10 @@ def collect():
                 title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:125]
                 raw_description = unescape(item.findtext("description", ""))
                 summary = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_description)).strip()[:260]
-                if not title or not STRONG.search(title) or SKIP.search(title):
+                quality = score(title, summary)
+                if not title or quality < 6:
                     continue
-                result[link] = (title, summary, source)
+                result[link] = (title, summary, source, quality)
                 accepted += 1
             print("Fuente:", source, "| ítems:", count, "| relevantes:", accepted)
         except Exception as exc:
@@ -133,13 +161,14 @@ def main():
     candidates = collect()
     created = 0
     errors = 0
-    for link, (title, summary, source) in candidates.items():
+    for link, (title, summary, source, quality) in sorted(candidates.items(), key=lambda x: x[1][3], reverse=True):
         digest = hashlib.sha256(link.encode()).hexdigest()[:12]
         if digest in known:
             continue
         body = (
             "## Oportunidad indexada — PENDIENTE DE REVISIÓN\n\n"
             f"**Fuente del índice:** {source}\n"
+            f"**Puntuación automática de afinidad (no valida disponibilidad):** {quality}/12\n"
             "**Advertencia sobre plataformas:** Freelancer.com puede exigir saldo mínimo para pujar; Workana requiere aprobación del perfil. No gastar dinero.\n"
             f"**Anuncio original:** {link}\n"
             f"**Título en el RSS:** {title}\n\n"
