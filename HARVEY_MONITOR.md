@@ -1,11 +1,11 @@
 # Harvey Commerce AI — buscador autónomo de oportunidades
 
 ## Estado al 31/10/2026
-- Programación configurada: **cada 4 horas, minuto 23 UTC** (6 veces al día), en el repositorio público de la agencia. Las ejecuciones pueden retrasarse o fallar, y **todavía no se ha acreditado una ejecución correcta**.
-- Origen: entradas RSS públicas indexadas por Bing; no se accede a cuentas privadas ni se extrae contenido detrás de autenticación.
-- Guarda como máximo 3 oportunidades por ejecución, con tope de 20 pendientes. Trata los anuncios indexados como **no verificados**, aunque las entradas lleven título y URL.
+- Programación configurada: **cada 4 horas, minuto 23 UTC** (6 veces al día), en el repositorio público de la agencia. Las ejecuciones pueden retrasarse o fallar. Se han **verificado ejecuciones correctas de GitHub Actions**, pero cada futura ejecución y la captación de clientes no están garantizadas.
+- Origen: RSS públicos de Freelancer y resultados RSS de Bing con anuncios de Workana; no se accede a cuentas privadas ni a contenido detrás de autenticación. El buscador RSS puede omitir oportunidades reales, devolver datos caducados o fallar temporalmente.
+- Guarda como máximo **5 oportunidades por ejecución**, con tope de **30 pendientes**. Clasifica anuncios por afinidad a fichas de producto, contenido SEO y Shopify; intenta excluir prohibiciones de IA, condiciones idiomáticas inadecuadas y proyectos amplios de desarrollo. Las coincidencias y puntuaciones **no son clientes ni anuncios verificados**, y requieren evaluación humana.
 - Para reducir duplicados se calcula un identificador a partir de la URL original y se compara con los issues ya guardados.
-- Cada oportunidad contiene un texto orientativo. **El sistema NO envía solicitudes, propuestas, emails, DMs, mensajes, pagos ni contratos**.
+- Cada oportunidad contiene un borrador genérico que debe personalizarse y revisarse. Los anuncios encontrados manualmente cuentan con propuestas específicas en el repositorio privado.  **El sistema NO envía solicitudes, propuestas, emails, DMs, mensajes, pagos ni contratos**.
 - Los resultados van a [Issues de esta agencia](https://github.com/infolevanemaison/harvey-commerce-ai-web/issues) y el proceso se consulta en [GitHub Actions](https://github.com/infolevanemaison/harvey-commerce-ai-web/actions/workflows/harvey-oportunidades.yml).
 - No se emplean API de pago ni suscripciones adicionales; los límites gratuitos de GitHub dependen del repositorio y la cuenta.
 
@@ -28,3 +28,8 @@
 - Oportunidades sin revisar: consultar Issues; su existencia no equivale a leads interesados.
 
 El objetivo es minimizar las tareas del fundador, pero el trabajo pagado y los compromisos con terceros requieren autorización legal, supervisión y acceso seguro.
+
+## Última comprobación técnica (31/10/2026)
+- Ejecución anterior correcta del flujo: https://github.com/infolevanemaison/harvey-commerce-ai-web/actions/runs/41243210423. El filtro y la puntuación se han modificado el 01/11/2026 y deben contrastarse con un nuevo registro de Actions.
+- Importante: registros en Issues contienen anuncios **no contactados**; los cerrados son descartados por falta de encaje. No son visitas ni solicitudes recibidas en la agencia.
+- Trabajo comercial y obligaciones legales siguen bloqueados antes de autorización y validación.
