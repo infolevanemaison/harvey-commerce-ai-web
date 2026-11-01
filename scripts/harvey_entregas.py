@@ -159,6 +159,25 @@ def generate(brief, output):
         "- No prometer ventas o posicionamiento ni afirmar que el cliente aprobó los borradores.\n"
     )
     (output/"QA_PENDIENTES.md").write_text(report,encoding="utf-8")
+    proposal = (
+        "# PROPUESTA COMERCIAL NO VINCULANTE — " + alias + "\n\n"
+        "**Oferta orientativa:** 149 EUR por cinco fichas de producto Shopify. "
+        "Impuestos, comisiones y total a pagar deben confirmarse según la situación fiscal "
+        "y el canal de contratación. Esta propuesta no constituye una factura ni contrato.\n\n"
+        "## Entregables para revisión\n"
+        "- Cinco títulos, descripciones basadas en datos aportados y FAQs.\n"
+        "- Cinco SEO titles y cinco meta descriptions en formato CSV.\n"
+        "- Cinco ideas preliminares de contenido orgánico.\n"
+        "- Una ronda de ajustes editoriales acordada antes de contratar.\n\n"
+        "## Exclusiones\n"
+        "- No incluye publicación en Shopify, edición de vídeos, campañas publicitarias "
+        "ni gestión de redes ni garantías de ventas.\n"
+        "- El plazo solo será válido si ambas partes lo aceptan después de recibir "
+        "datos verificados, derechos sobre imágenes y políticas de tienda.\n\n"
+        "**ESTADO: BORRADOR SIN ENVIAR, SIN ACEPTACIÓN, SIN COBRO.**\n"
+        "No compartir por canales prohibidos ni usar fuera de Workana para clientes de Workana.\n"
+    )
+    (output/"PRESUPUESTO_NO_VINCULANTE.md").write_text(proposal,encoding="utf-8")
     return {"drafts":len(rows),"missing_product_fields":len(pending),"status":"review_required"}
 
 def main():
