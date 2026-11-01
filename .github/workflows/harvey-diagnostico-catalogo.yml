@@ -1,0 +1,43 @@
+name: Harvey - Diagnostico publico de catalogos Shopify
+on:
+  push:
+    paths:
+      - 'scripts/diagnostico_catalogo.py'
+      - 'tests/test_diagnostico_catalogo.py'
+      - '.github/workflows/harvey-diagnostico-catalogo.yml'
+  workflow_dispatch:
+    inputs:
+      store_url:
+        description: 'Dominio HTTPS publico de la tienda (vacio: solo pruebas)'
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  diagnosticar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obtener codigo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Probar diagnostico con datos ficticios
+        run: python3 -m unittest discover -s tests -p 'test_diagnostico_catalogo.py' -v
+      - name: Diagnosticar tienda Shopify publica (manual)
+        if: github.event_name == 'workflow_dispatch' && inputs.store_url != ''
+        env:
+          STORE_URL: ${{ inputs.store_url }}
+        run: |
+          python3 scripts/diagnostico_catalogo.py --store "$STORE_URL" \
+            --json "$RUNNER_TEMP/harvey-catalogo.json" \
+            --markdown "$RUNNER_TEMP/harvey-catalogo.md"
+      - name: Guardar diagnostico para revision humana
+        if: github.event_name == 'workflow_dispatch' && inputs.store_url != '' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvey-diagnostico-shopify
+          path: |
+            ${{ runner.temp }}/harvey-catalogo.json
+            ${{ runner.temp }}/harvey-catalogo.md
+          retention-days: 7
