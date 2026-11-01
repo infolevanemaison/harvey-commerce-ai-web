@@ -22,6 +22,12 @@ class LeadTests(unittest.TestCase):
         a = lead.assess(item(2, "[lead:abc] Shopify product descriptions The budget is $20."))
         b = lead.assess(item(3, "[lead:def] Shopify product descriptions"))
         self.assertLess(a["score"], b["score"])
+    def test_disallows_freelancer_even_if_good_fit(self):
+        project = item(12, "[lead:abc] Shopify product descriptions",
+                       "**Anuncio original:** https://www.freelancer.com/projects/shopify/example")
+        self.assertIsNone(lead.assess(project))
+        self.assertEqual(lead.rank([project]), [])
+
     def test_disallows_normal_issues(self):
         self.assertIsNone(lead.assess(item(5, "Manual CI fixes")))
     def test_ignores_closed(self):
