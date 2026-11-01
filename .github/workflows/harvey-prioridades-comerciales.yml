@@ -1,0 +1,36 @@
+name: Harvey - Priorizar oportunidades sin contactar
+on:
+  push:
+    paths:
+      - 'scripts/priorizar_oportunidades.py'
+      - 'tests/test_priorizar_oportunidades.py'
+      - '.github/workflows/harvey-prioridades-comerciales.yml'
+  schedule:
+    - cron: '17 7 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: read
+jobs:
+  reporte-comercial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obtener archivos
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Comprobar clasificador sin red
+        run: python3 -m unittest discover -s tests -p 'test_priorizar_oportunidades.py' -v
+      - name: Clasificar oportunidades abiertas registradas en GitHub
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/priorizar_oportunidades.py --output "$RUNNER_TEMP/harvey-prioridades.md"
+      - name: Guardar informe como artefacto privado del workflow
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harvey-prioridades-comerciales
+          path: ${{ runner.temp }}/harvey-prioridades.md
+          retention-days: 7
