@@ -51,3 +51,11 @@ El objetivo es minimizar las tareas del fundador, pero el trabajo pagado y los c
 - Las notificaciones de proyectos de Workana pueden configurarse por el titular desde **foto de perfil → Mi cuenta → Notificaciones y alertas**. Fuente oficial: https://help.workana.com/hc/es/articles/360042101293--C%C3%B3mo-configurar-las-notificaciones-de-proyectos-que-recibes-por-correo
 - Se amplió la automatización ChatGPT existente «Harvey responde mi correo» para clasificar **notificaciones nativas de nuevos proyectos Workana**, si llegan al Gmail autorizado, en su única comprobación diaria de Workana. No confirmar que las notificaciones estén activadas: no hay acceso a preferencias del perfil. No se ha creado otra tarea ni se accede al sitio con bots.
 - **Siguiente condición:** recibir un aviso oficial legítimo o que el titular habilite alertas; hasta entonces no se espera que la rama de correo descubra nuevas oportunidades. No gastar, no postular ni contratar sin habilitación legal y perfil aprobado.
+
+## Confirmación del titular: avisos de Workana activados — 04/11/2026
+
+- El titular declara **«está todo activado en Workana»**. Considerar la configuración de avisos de proyectos activada **según confirmación del titular**; no repetir instrucciones para activarla.
+- Verificación independiente del correo conectado `infolevanemaison@gmail.com` (Gmail, 04/11): búsquedas `workana -in:spam -in:trash` y `from:(workana.com) -in:spam -in:trash` devolvieron **0 mensajes**. Esto no demuestra un problema de Workana ni que las alertas estén desactivadas; no hay aviso recibido aún en este buzón.
+- La tarea ya existente `Harvey responde mi correo` clasifica una vez al día avisos oficiales de moderación y nuevos proyectos; no añadir cron ni bots de Workana ni tratar un aviso como contrato.
+- Aprobación del perfil: **no verificada por acceso al panel ni email**, incluso si el usuario confirma que tiene todo activado. Distinguir ajustes de notificaciones, aprobación del perfil y habilitación para contratar.
+- Siguiente paso automático: cuando llegue una alerta real, confirmar remitente, fecha, enlace de proyecto y encaje con Shopify y fichas. Preparar propuesta en borrador y medir propuestas enviadas solo con evidencia en el canal autorizado. No realizar contrataciones remuneradas antes de resolver las autorizaciones profesionales y fiscales pendientes.
