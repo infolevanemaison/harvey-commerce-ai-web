@@ -9,7 +9,7 @@ Maximizar trabajo autónomo manteniendo acceso, cobros, compromisos y gastos con
 3. **Redacción IA generativa:** no conectada en GitHub. El generador actual es determinista y no usa APIs ni consume créditos.
 4. **Workana:** API de envío no disponible; términos prohíben acceder a sus recursos por medios automáticos no autorizados; no bots ni compartir datos/contactos o cobrar fuera de plataforma. Preparar propuestas y entregar usando sus herramientas cuando estén autorizadas.
 5. **Captación directa:** candidaturas individualizadas enviadas desde Gmail a invitaciones públicas (2 confirmadas). No hay un buzón específico de la agencia ni automatización externa del correo de ese buzón.
-6. **Cobros directos:** Stripe todavía no conectado. Ningún enlace de pago real creado.
+6. **Cobros directos (actualizado 04/11/2026):** Stripe dispone de un monitor de solo lectura con clave restringida; el 04/11 a las 13:46 UTC se consultó correctamente 1 página: 0 sesiones completadas y 0 pagos reales de 149 €. El enlace de pago LIVE histórico está desactivado y no debe reactivarse mientras la contratación esté suspendida. El funcionamiento del monitor no equivale a poder cobrar nuevos encargos.
 7. **Contratos, facturas, entregas:** sin contratos reales ni cobros confirmados. No hay pipeline seguro activo para clientes reales.
 8. **Privacidad:** el repositorio actual es público; **NUNCA subir briefs reales con datos de clientes, datos personales, fotografías no autorizadas, credenciales, secretos o contratos**. El motor de producción público admite solo entradas `demo-`. Para clientes reales hará falta un repositorio privado y un sistema de acceso seguro separado de Levanemaison.
 
@@ -40,3 +40,7 @@ Maximizar trabajo autónomo manteniendo acceso, cobros, compromisos y gastos con
 `Lead público → filtro → borrador de propuesta → canal de postulación permitido → consulta/brief consentido → oferta aceptada y cobro confirmado → producción privada → QA → entrega privada → revisión → cierre/facturación.`
 
 **Situación real:** Automatizados el primer filtro y el generador DEMO. No afirmar que cobros, contratos ni entregas reales ya sean autónomos.
+
+## Seguimiento Workana y PeoplePerHour — 04/11/2026
+
+Consultar `docs/plan-workana-pph-20261104.md`: incluye fuentes oficiales, tres oportunidades públicas verificadas como abiertas en noviembre (antiguas, con competencia), borradores NO enviados, perfil profesional sin resultados ficticios y restricción legal. El estado exacto de Workana NO se ha comprobado dentro de la cuenta: en Gmail no aparece aprobación, no asumirla. Freelancer sigue excluido. PeoplePerHour sin cuenta autorizada. No crear cronjobs ni enviar pujas, contratos, emails o pagos con esta actualización.
