@@ -22,6 +22,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Probar clasificación antes de consultar las fuentes
+        run: python3 -m unittest discover -s tests -p 'test_monitor_oportunidades.py' -v
       - name: Detectar ofertas indexadas y guardar hasta 3 borradores para revisión
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
