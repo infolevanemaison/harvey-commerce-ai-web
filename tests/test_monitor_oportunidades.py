@@ -37,5 +37,10 @@ class ScoreTests(unittest.TestCase):
         self.assertIsNone(mod.normalise_link("http://www.workana.com/job/x"))
 
 
+    def test_source_coverage_reports_empty_and_invalid_rss(self):
+        self.assertEqual(mod.source_coverage(0, 0), "SIN_DATOS_RSS")
+        self.assertEqual(mod.source_coverage(26, 0), "SIN_ENLACES_WORKANA")
+        self.assertEqual(mod.source_coverage(30, 2), "ENLACES_WORKANA_PRESENTES")
+
 if __name__ == "__main__":
     unittest.main()

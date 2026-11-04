@@ -104,8 +104,19 @@ def normalise_link(link):
         return parts.scheme+"://"+host+parts.path.rstrip("/")
     return None
 
+def source_coverage(items_seen, workana_links):
+    """Only label the public RSS source healthy when it yields Workana URLs."""
+    if items_seen == 0:
+        return "SIN_DATOS_RSS"
+    if workana_links == 0:
+        return "SIN_ENLACES_WORKANA"
+    return "ENLACES_WORKANA_PRESENTES"
+
+
 def collect():
     result = {}
+    total_seen = 0
+    total_valid_links = 0
     for source, url in FEEDS:
         count = 0
         accepted = 0
@@ -115,12 +126,14 @@ def collect():
             root = ET.fromstring(fetch(url))
             items = root.findall(".//item")
             count = len(items)
+            total_seen += count
             for item in items:
                 raw_link = unescape(item.findtext("link", "") or item.findtext("guid", "")).strip()
                 link = normalise_link(raw_link)
                 if not link:
                     bad_link += 1
                     continue
+                total_valid_links += 1
                 title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:125]
                 raw_description = unescape(item.findtext("description", ""))
                 summary = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_description)).strip()[:260]
@@ -135,6 +148,23 @@ def collect():
                   "| descartes enlace:", bad_link, "| descartes filtro:", low_score)
         except Exception as exc:
             print("Fuente no accesible:", source, type(exc).__name__, str(exc)[:100], file=sys.stderr)
+    coverage = source_coverage(total_seen, total_valid_links)
+    message = (f"Salud de fuente: {coverage} | ítems RSS: {total_seen} "
+               f"| enlaces válidos a Workana: {total_valid_links} "
+               f"| anuncios aceptados: {len(result)}")
+    print(message)
+    if coverage != "ENLACES_WORKANA_PRESENTES":
+        print("AVISO: el RSS externo no aporta anuncios verificables de Workana; "
+              "un workflow verde no equivale a captación ni a proyectos disponibles. "
+              "No se hará scraping directo de Workana.", file=sys.stderr)
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary_path:
+        try:
+            with open(summary_path, "a", encoding="utf-8") as summary:
+                summary.write("### Harvey · cobertura de oportunidades Workana\n\n"
+                              + message + "\n\n")
+        except OSError as exc:
+            print("Aviso: no se pudo escribir resumen GitHub:", type(exc).__name__, file=sys.stderr)
     return result
 
 def main():
