@@ -44,7 +44,12 @@ STRONG = re.compile(
     r"social media (?:posts|copy|content)|"
     r"fichas de productos?|descripciones? de productos?|"
     r"cat[aá]logo|optimizaci[oó]n de productos?|"
-    r"contenido para (?:redes|e.?commerce)|publicaciones para redes", re.I
+    r"contenido para (?:redes|e.?commerce)|publicaciones para redes|"
+    # Títulos de Workana en español (03/11: 30 ítems/ejecución y 0 aceptados).
+    r"(?:carga|alta|subida) (?:recurrente )?de productos|"
+    r"editor(?:es|a)? de contenidos?|redact(?:or|ora|ores|ar)\b|redacci[oó]n|"
+    r"textos? (?:para|de) (?:tienda|productos?|e.?commerce)|contenidos? (?:web|seo)|"
+    r"asistente (?:de |para )?shopify", re.I
 )
 # No aceptar trabajos que prohíben IA ni idiomas que no podamos revisar con fiabilidad.
 INCOMPATIBLE = re.compile(
@@ -104,6 +109,8 @@ def collect():
     for source, url in FEEDS:
         count = 0
         accepted = 0
+        bad_link = 0
+        low_score = 0
         try:
             root = ET.fromstring(fetch(url))
             items = root.findall(".//item")
@@ -112,16 +119,20 @@ def collect():
                 raw_link = unescape(item.findtext("link", "") or item.findtext("guid", "")).strip()
                 link = normalise_link(raw_link)
                 if not link:
+                    bad_link += 1
                     continue
                 title = re.sub(r"\s+", " ", unescape(item.findtext("title", ""))).strip()[:125]
                 raw_description = unescape(item.findtext("description", ""))
                 summary = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_description)).strip()[:260]
                 quality = score(title, summary)
                 if not title or quality < 6:
+                    low_score += 1
                     continue
                 result[link] = (title, summary, source, quality)
                 accepted += 1
-            print("Fuente:", source, "| ítems:", count, "| relevantes:", accepted)
+            # Desglose para que un 0 sostenido no pase por funcionamiento correcto.
+            print("Fuente:", source, "| ítems:", count, "| relevantes:", accepted,
+                  "| descartes enlace:", bad_link, "| descartes filtro:", low_score)
         except Exception as exc:
             print("Fuente no accesible:", source, type(exc).__name__, str(exc)[:100], file=sys.stderr)
     return result
